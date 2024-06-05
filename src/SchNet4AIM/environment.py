@@ -58,7 +58,7 @@ class SimpleEnvironmentProvider(BaseEnvironmentProvider):
             )
 
             neighborhood_idx = neighborhood_idx[
-                ~np.eye(n_atoms, dtype=np.bool)
+                ~np.eye(n_atoms, dtype=bool)
             ].reshape(n_atoms, n_atoms - 1)
 
             if grid is not None:

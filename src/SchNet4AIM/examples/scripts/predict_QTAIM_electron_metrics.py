@@ -20,6 +20,7 @@ import sklearn
 import os
 import importlib
 import sys
+sys.path.append("../../..")
 os.environ['Pmode']   = "1p"
 os.environ['DBmode']  = "json"
 os.environ['frset']   = os.pathsep.join(str(i) for i in sorted(elements))

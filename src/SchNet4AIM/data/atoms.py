@@ -360,7 +360,7 @@ class AtomsData(Dataset):
 
         def __getitem__(self, idx):
             _, properties = self.get_properties(idx, self.load_only)
-            properties["_idx"] = np.array([idx], dtype=np.int)
+            properties["_idx"] = np.array([idx], dtype=int)
 
             return torchify_dict(properties)
 
@@ -576,7 +576,7 @@ class AtomsDataSubset(Subset):
    
     def __getitem__(self, idx):
         _, properties = self.get_properties(self.indices[idx], self.load_only)
-        properties["_idx"] = np.array([idx], dtype=np.int)
+        properties["_idx"] = np.array([idx], dtype=int)
 
         return torchify_dict(properties)
 
@@ -611,7 +611,7 @@ def _convert_atoms(
         inputs = output
 
     # Elemental composition
-    inputs[Properties.Z] = atoms.numbers.astype(np.int)
+    inputs[Properties.Z] = atoms.numbers.astype(int)
     positions = atoms.positions.astype(np.float32)
     if centering_function:
         positions -= centering_function(atoms)
@@ -621,7 +621,7 @@ def _convert_atoms(
     nbh_idx, offsets = environment_provider.get_environment(atoms)
 
     # Get neighbors and neighbor mask
-    inputs[Properties.neighbors] = nbh_idx.astype(np.int)
+    inputs[Properties.neighbors] = nbh_idx.astype(int)
 
     # Get cells
     inputs[Properties.cell] = np.array(atoms.cell.array, dtype=np.float32)
@@ -630,11 +630,11 @@ def _convert_atoms(
     # If requested get neighbor lists for triples
     if collect_triples:
         nbh_idx_j, nbh_idx_k, offset_idx_j, offset_idx_k = collect_atom_triples(nbh_idx)
-        inputs[Properties.neighbor_pairs_j] = nbh_idx_j.astype(np.int)
-        inputs[Properties.neighbor_pairs_k] = nbh_idx_k.astype(np.int)
+        inputs[Properties.neighbor_pairs_j] = nbh_idx_j.astype(int)
+        inputs[Properties.neighbor_pairs_k] = nbh_idx_k.astype(int)
 
-        inputs[Properties.neighbor_offsets_j] = offset_idx_j.astype(np.int)
-        inputs[Properties.neighbor_offsets_k] = offset_idx_k.astype(np.int)
+        inputs[Properties.neighbor_offsets_j] = offset_idx_j.astype(int)
+        inputs[Properties.neighbor_offsets_k] = offset_idx_k.astype(int)
 
     return inputs
 
@@ -653,13 +653,13 @@ def torchify_dict(data):
        # Retrieve the properties in the database
        for pname, prop in data.items():
            prop=np.array(prop)                                                   
-           if prop.dtype in [np.int, np.int32, np.int64]:
+           if prop.dtype in [int, int, int]:
                torch_properties[pname] = torch.LongTensor(np.array(prop,float))
-           elif prop.dtype in [np.float, np.float32, np.float64]:
+           elif prop.dtype in [np.float32, np.float32, np.float64]:
                torch_properties[pname] = torch.FloatTensor(prop.copy())
     else:
        for pname, prop in data.items():
-           if prop.dtype in [np.int, np.int32, np.int64]:
+           if prop.dtype in [int, int, int]:
                torch_properties[pname] = torch.LongTensor(prop)
            elif prop.dtype in [np.float, np.float32, np.float64]:
                torch_properties[pname] = torch.FloatTensor(prop.copy())
